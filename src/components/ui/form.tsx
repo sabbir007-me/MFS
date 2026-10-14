@@ -7,7 +7,7 @@ import { passwordStrength } from "@/lib/validation";
 import { useI18n } from "@/hooks/use-i18n";
 
 const control =
-  "block w-full rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500 aria-[invalid=true]:border-rose-400 aria-[invalid=true]:focus:ring-rose-500/15";
+  "block w-full rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] text-slate-900 shadow-well outline-none transition placeholder:text-slate-400 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/15 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500 aria-[invalid=true]:border-rose-400 aria-[invalid=true]:focus:ring-rose-500/15";
 
 interface FieldProps {
   label?: React.ReactNode;

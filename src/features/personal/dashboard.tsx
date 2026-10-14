@@ -20,6 +20,7 @@ import {
 import { ChartCard, ColumnChart, DonutCard, TrendChart } from "@/components/charts/charts";
 import { ButtonLink } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
+import { Tilt } from "@/components/ui/depth";
 import { StatTile } from "@/components/ui/data";
 import { Alert, EmptyState, ErrorState, Skeleton } from "@/components/ui/feedback";
 import { TransactionDetail } from "@/components/transactions/transaction-detail";
@@ -77,46 +78,55 @@ export function PersonalDashboardView() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         {/* Wallet card */}
-        <section aria-label={t("Balance")} className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-800 via-brand-700 to-brand-500 p-6 text-white shadow-lg sm:p-7">
-          <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10" aria-hidden />
-          <div className="pointer-events-none absolute -bottom-20 right-24 h-40 w-40 rounded-full bg-white/5" aria-hidden />
-          <div className="relative flex items-start justify-between">
-            <div>
-              <p className="text-sm text-brand-100">{t("Available balance")}</p>
-              {d ? (
-                <p className="mt-1 text-4xl font-bold tracking-tight sm:text-5xl">{money(d.wallet.available)}</p>
-              ) : (
-                <Skeleton className="mt-2 h-11 w-56 bg-white/20" />
-              )}
+        <section aria-label={t("Balance")}>
+          <Tilt
+            max={6}
+            className="h-full rounded-3xl bg-gradient-to-br from-brand-800 via-brand-700 to-brand-500 p-6 text-white sm:p-7 [--tilt-shadow:inset_0_1px_0_rgb(255_255_255/0.25),inset_0_-3px_0_rgb(0_0_0/0.12),0_24px_48px_-20px_rgb(12_67_57/0.7)] [--tilt-shadow-active:inset_0_1px_0_rgb(255_255_255/0.25),inset_0_-3px_0_rgb(0_0_0/0.12),0_40px_70px_-24px_rgb(12_67_57/0.8)]"
+          >
+            {/* Decoration is clipped in its own layer: overflow on the card itself would flatten the 3D. */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]" aria-hidden>
+              <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10" />
+              <div className="absolute -bottom-20 right-24 h-40 w-40 rounded-full bg-white/5" />
+              <div className="absolute inset-0 bg-[linear-gradient(115deg,rgb(255_255_255/0.14)_0%,transparent_38%)]" />
             </div>
-            <button
-              type="button"
-              onClick={() => setHidden((h) => !h)}
-              className="grid h-10 w-10 place-items-center rounded-xl bg-white/15 transition hover:bg-white/25"
-              aria-label={hidden ? t("Show balances") : t("Hide balances")}
-              aria-pressed={hidden}
-            >
-              {hidden ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
-            </button>
-          </div>
-          <div className="relative mt-6 grid grid-cols-2 gap-3">
-            <div className="rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm">
-              <p className="flex items-center gap-1.5 text-xs text-brand-100">
-                <PiggyBank className="h-3.5 w-3.5" aria-hidden /> {t("Savings balance")}
-              </p>
-              <p className="tabular mt-1 font-semibold">{d ? money(d.wallet.savings) : "—"}</p>
+            <div className="tilt-pop relative flex items-start justify-between [--z:36px]">
+              <div>
+                <p className="text-sm text-brand-100">{t("Available balance")}</p>
+                {d ? (
+                  <p className="mt-1 text-4xl font-bold tracking-tight sm:text-5xl">{money(d.wallet.available)}</p>
+                ) : (
+                  <Skeleton className="mt-2 h-11 w-56 bg-white/20" />
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setHidden((h) => !h)}
+                className="grid h-10 w-10 place-items-center rounded-xl bg-white/15 transition hover:bg-white/25"
+                aria-label={hidden ? t("Show balances") : t("Hide balances")}
+                aria-pressed={hidden}
+              >
+                {hidden ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+              </button>
             </div>
-            <div className="rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm">
-              <p className="text-xs text-brand-100">{t("Pending balance")}</p>
-              <p className="tabular mt-1 font-semibold">{d ? money(d.wallet.pending) : "—"}</p>
+            <div className="tilt-pop relative mt-6 grid grid-cols-2 gap-3 [--z:20px]">
+              <div className="rounded-2xl bg-white/10 px-4 py-3 shadow-[inset_0_1px_0_rgb(255_255_255/0.18)] backdrop-blur-sm">
+                <p className="flex items-center gap-1.5 text-xs text-brand-100">
+                  <PiggyBank className="h-3.5 w-3.5" aria-hidden /> {t("Savings balance")}
+                </p>
+                <p className="tabular mt-1 font-semibold">{d ? money(d.wallet.savings) : "—"}</p>
+              </div>
+              <div className="rounded-2xl bg-white/10 px-4 py-3 shadow-[inset_0_1px_0_rgb(255_255_255/0.18)] backdrop-blur-sm">
+                <p className="text-xs text-brand-100">{t("Pending balance")}</p>
+                <p className="tabular mt-1 font-semibold">{d ? money(d.wallet.pending) : "—"}</p>
+              </div>
             </div>
-          </div>
-          <div className="relative mt-5 flex items-center justify-between text-xs text-brand-100">
-            <span className="tabular">{t("Wallet")} · {formatPhone(user.phone)}</span>
-            <Link href="/dashboard/personal/add-money" className="inline-flex items-center gap-1 font-semibold text-white hover:underline">
-              <CirclePlus className="h-3.5 w-3.5" aria-hidden /> {t("Add money")}
-            </Link>
-          </div>
+            <div className="relative mt-5 flex items-center justify-between text-xs text-brand-100">
+              <span className="tabular">{t("Wallet")} · {formatPhone(user.phone)}</span>
+              <Link href="/dashboard/personal/add-money" className="inline-flex items-center gap-1 font-semibold text-white hover:underline">
+                <CirclePlus className="h-3.5 w-3.5" aria-hidden /> {t("Add money")}
+              </Link>
+            </div>
+          </Tilt>
         </section>
 
         {/* Quick actions */}
@@ -126,7 +136,7 @@ export function PersonalDashboardView() {
             {QUICK.map(({ href, label, icon: Icon }) => (
               <li key={href}>
                 <Link href={href} className="group flex flex-col items-center gap-2 rounded-2xl p-2 text-center transition hover:bg-slate-50">
-                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-700 transition group-hover:bg-brand-600 group-hover:text-white">
+                  <span className="icon-3d grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-700 transition group-hover:-translate-y-0.5 group-hover:bg-brand-600 group-hover:text-white group-active:translate-y-px">
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
                   <span className="text-xs font-semibold text-slate-700">{t(label)}</span>

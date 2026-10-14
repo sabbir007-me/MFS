@@ -7,16 +7,17 @@ type Variant = "primary" | "secondary" | "outline" | "ghost" | "soft" | "danger"
 type Size = "sm" | "md" | "lg" | "icon";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-xl font-semibold whitespace-nowrap transition-[background-color,color,box-shadow,filter,transform] duration-150 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2";
+  "inline-flex items-center justify-center gap-2 rounded-xl font-semibold whitespace-nowrap transition-[background-color,color,box-shadow,filter,translate] duration-150 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2";
 
+/* Depth comes from .btn-3d / .btn-3d-light in globals.css; --btn-glow tints the glow under each slab. */
 const variants: Record<Variant, string> = {
-  primary: "bg-accent-600 text-accent-fg shadow-sm hover:brightness-95",
-  brand: "bg-brand-600 text-white shadow-sm hover:bg-brand-700",
-  secondary: "bg-slate-900 text-white shadow-sm hover:bg-slate-800",
-  outline: "border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 hover:text-slate-900",
-  ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
-  soft: "bg-accent-50 text-accent-700 hover:bg-accent-100",
-  danger: "bg-rose-600 text-white shadow-sm hover:bg-rose-700",
+  primary: "btn-3d bg-accent-600 text-accent-fg [--btn-glow:color-mix(in_srgb,var(--accent-600)_60%,transparent)] hover:brightness-105",
+  brand: "btn-3d bg-brand-600 text-white [--btn-glow:rgb(13_128_101/0.6)] hover:bg-brand-500",
+  secondary: "btn-3d bg-slate-900 text-white hover:bg-slate-800",
+  outline: "btn-3d-light border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900",
+  ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:translate-y-px",
+  soft: "btn-3d-light bg-accent-50 text-accent-700 hover:bg-accent-100",
+  danger: "btn-3d bg-rose-600 text-white [--btn-glow:rgb(225_29_72/0.55)] hover:bg-rose-700",
 };
 
 const sizes: Record<Size, string> = {

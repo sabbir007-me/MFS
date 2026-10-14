@@ -31,8 +31,30 @@
   --color-chart-3: #1baf7a;
   --color-chart-4: #eda100;
 
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.05);
-  --shadow-float: 0 18px 40px -18px rgb(15 23 42 / 0.35);
+  /*
+   * Depth scale — every elevated surface is lit from above: a 1px inner top
+   * highlight (the bevel) plus stacked ambient + key shadows underneath.
+   * card < raised < depth < float. `well` is the inverse: a sunken track.
+   */
+  --shadow-card:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 1px 1px rgb(15 23 42 / 0.04),
+    0 2px 4px -1px rgb(15 23 42 / 0.05),
+    0 10px 20px -12px rgb(15 23 42 / 0.16);
+  --shadow-raised:
+    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    0 1px 2px rgb(15 23 42 / 0.08),
+    0 4px 10px -6px rgb(15 23 42 / 0.22);
+  --shadow-depth:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 2px 4px rgb(15 23 42 / 0.04),
+    0 14px 28px -10px rgb(15 23 42 / 0.18),
+    0 36px 64px -28px rgb(15 23 42 / 0.32);
+  --shadow-float:
+    0 2px 4px rgb(15 23 42 / 0.05),
+    0 14px 28px -10px rgb(15 23 42 / 0.2),
+    0 34px 60px -24px rgb(15 23 42 / 0.36);
+  --shadow-well: inset 0 1px 2px rgb(15 23 42 / 0.08), inset 0 0 0 1px rgb(15 23 42 / 0.03);
 
   --animate-fade-in: fade-in 160ms ease-out;
   --animate-scale-in: scale-in 160ms ease-out;
@@ -64,6 +86,18 @@
   @keyframes pop {
     0% { opacity: 0; transform: scale(0.6); }
     100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes float-3d {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -14px, 0); }
+  }
+  @keyframes float-shadow {
+    0%, 100% { transform: scale(1); opacity: 0.55; }
+    50% { transform: scale(0.86); opacity: 0.35; }
+  }
+  @keyframes spin-y {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
   }
 }
 
@@ -157,6 +191,262 @@ body {
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/*
+ * 3D primitives
+ * One light source, top-left. Surfaces get a bright bevel on top and a darker
+ * lip below; interactive ones rise toward the pointer and sink when pressed.
+ * Pointer-driven motion lives in components/ui/depth.tsx and is skipped on
+ * touch screens and under prefers-reduced-motion.
+ */
+@layer components {
+  /* Solid buttons: a glossy slab with a coloured glow beneath it. */
+  .btn-3d {
+    --btn-glow: rgb(15 23 42 / 0.45);
+    background-image: linear-gradient(180deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0) 52%, rgb(0 0 0 / 0.06));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.24),
+      inset 0 -2px 0 rgb(0 0 0 / 0.16),
+      0 1px 1px rgb(15 23 42 / 0.1),
+      0 6px 14px -6px var(--btn-glow);
+  }
+  .btn-3d:hover {
+    translate: 0 -1px;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.24),
+      inset 0 -2px 0 rgb(0 0 0 / 0.16),
+      0 2px 2px rgb(15 23 42 / 0.08),
+      0 12px 22px -8px var(--btn-glow);
+  }
+  .btn-3d:active {
+    translate: 0 1px;
+    box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.2), 0 1px 1px rgb(15 23 42 / 0.08);
+  }
+
+  /* Light buttons (outline / soft): a raised plate that presses into a well. */
+  .btn-3d-light {
+    box-shadow: var(--shadow-raised);
+  }
+  .btn-3d-light:hover {
+    translate: 0 -1px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.95), 0 2px 4px rgb(15 23 42 / 0.06), 0 10px 18px -10px rgb(15 23 42 / 0.32);
+  }
+  .btn-3d-light:active {
+    translate: 0 1px;
+    box-shadow: var(--shadow-well);
+  }
+
+  /* Icon tiles: a glossy, extruded chip. Works over any bg-* tint. */
+  .icon-3d {
+    background-image: linear-gradient(160deg, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0) 58%);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.85),
+      inset 0 -2px 0 rgb(15 23 42 / 0.08),
+      0 1px 1px rgb(15 23 42 / 0.06),
+      0 6px 12px -6px rgb(15 23 42 / 0.32);
+  }
+  .icon-3d-dark {
+    background-image: linear-gradient(160deg, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0) 60%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), inset 0 -2px 0 rgb(0 0 0 / 0.25), 0 8px 16px -8px rgb(0 0 0 / 0.6);
+  }
+
+  /* Extruded display text: a short stack of offset shadows in a darker tone. */
+  .text-3d {
+    --extrude: var(--color-brand-800);
+    text-shadow:
+      0 1px 0 var(--extrude),
+      0 2px 0 var(--extrude),
+      0 3px 0 color-mix(in srgb, var(--extrude) 80%, black),
+      0 12px 20px rgb(5 38 32 / 0.25);
+  }
+
+  /* Pointer tilt (see <Tilt>). At rest there is no transform, so text stays crisp. */
+  .tilt-3d {
+    position: relative;
+    transform-style: preserve-3d;
+    box-shadow: var(--tilt-shadow, var(--shadow-card));
+    transition: transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 300ms ease;
+  }
+  .tilt-3d[data-tilt-active] {
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    box-shadow: var(--tilt-shadow-active, var(--shadow-depth));
+    transition: transform 140ms ease-out, box-shadow 300ms ease;
+  }
+  .tilt-glare {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(420px circle at var(--gx, 50%) var(--gy, 0%), var(--glare, rgb(255 255 255 / 0.4)), transparent 45%);
+    mix-blend-mode: var(--glare-blend, overlay);
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+  .tilt-3d[data-tilt-active] .tilt-glare {
+    opacity: 1;
+  }
+  /* Light surfaces: a soft brand spotlight instead of a white overlay. */
+  .tilt-light {
+    --glare: rgb(25 160 124 / 0.1);
+    --glare-blend: normal;
+  }
+  /* Direct children marked tilt-pop lift off the card while it tilts. */
+  .tilt-pop {
+    transition: transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .tilt-3d[data-tilt-active] .tilt-pop {
+    transform: translateZ(var(--z, 28px));
+    transition-duration: 300ms;
+  }
+
+  /* Hero scene (see <ParallaxScene>): --px / --py run -1…1 with the pointer. */
+  .scene-3d {
+    --px: 0;
+    --py: 0;
+    perspective: 1400px;
+    perspective-origin: 50% 40%;
+  }
+  .scene-rig {
+    transform-style: preserve-3d;
+    transform: rotateX(calc(9deg - var(--py) * 8deg)) rotateY(calc(-18deg + var(--px) * 16deg));
+  }
+  .float-3d {
+    transform-style: preserve-3d;
+    animation: float-3d 7s ease-in-out infinite;
+  }
+  .float-shadow {
+    animation: float-shadow 7s ease-in-out infinite;
+  }
+  .spin-y {
+    transform-style: preserve-3d;
+    animation: spin-y 9s linear infinite;
+  }
+
+  /* Device body: stacked slabs behind the bezel give the phone real thickness. */
+  .phone-3d {
+    transform-style: preserve-3d;
+  }
+  .phone-3d__slab {
+    position: absolute;
+    inset: -10px;
+    border-radius: 44px;
+    background: #334155;
+    transform: translateZ(calc(var(--i) * -1.5px));
+  }
+  .phone-3d__screen {
+    transform: translateZ(1px);
+  }
+
+  /* Coin: two faces plus a stack of discs for the milled edge. */
+  .coin-3d {
+    position: relative;
+    width: 4.25rem;
+    height: 4.25rem;
+    transform-style: preserve-3d;
+  }
+  .coin-3d > span {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+  }
+  .coin-3d__edge {
+    background: #b45309;
+    transform: translateZ(calc(var(--i) * 1px - 4px));
+  }
+  .coin-3d__face {
+    display: grid;
+    place-items: center;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #78350f;
+    background: radial-gradient(circle at 35% 30%, #fef3c7, #fbbf24 45%, #d97706 80%);
+    box-shadow: inset 0 0 0 3px rgb(255 255 255 / 0.35), inset 0 -4px 8px rgb(120 53 15 / 0.35);
+    text-shadow: 0 1px 0 rgb(255 255 255 / 0.5);
+    backface-visibility: hidden;
+  }
+  .coin-3d__face--front {
+    transform: translateZ(4.5px);
+  }
+  .coin-3d__face--back {
+    transform: rotateY(180deg) translateZ(4.5px);
+  }
+
+  /* Receding floor grid — a cheap, strong depth cue behind hero scenes. The
+     top edge is the horizon: perspective() vanishes toward transform-origin,
+     so the floor hinges there and swings its near edge toward the viewer. */
+  .grid-floor {
+    position: absolute;
+    left: -50%;
+    right: -50%;
+    top: 45%;
+    bottom: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, var(--grid-line, rgb(13 128 101 / 0.16)) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line, rgb(13 128 101 / 0.16)) 1px, transparent 1px);
+    background-size: 64px 64px;
+    background-position: center top;
+    transform: perspective(600px) rotateX(58deg);
+    transform-origin: 50% 0;
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 50%);
+  }
+
+  /* Isometric stack: plates separated in Z, each with a solid edge drawn by
+     in-plane shadows that project straight down at this angle. */
+  .iso-stack {
+    transform-style: preserve-3d;
+    transform: rotateX(56deg) rotateZ(-45deg);
+  }
+  .iso-plate {
+    --edge: #cbd5e1;
+    position: absolute;
+    inset: 0;
+    border-radius: 1.5rem;
+    transform: translateZ(calc(var(--i) * var(--gap, 42px)));
+    transition: transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow:
+      -1px 1px 0 var(--edge), -2px 2px 0 var(--edge), -3px 3px 0 var(--edge),
+      -4px 4px 0 var(--edge), -5px 5px 0 var(--edge), -6px 6px 0 var(--edge),
+      -7px 7px 0 var(--edge), -8px 8px 0 var(--edge),
+      -26px 26px 30px rgb(15 23 42 / 0.16);
+  }
+  .iso-wrap:hover .iso-plate {
+    --gap: 58px;
+  }
+
+  /* Floating action in the mobile tab bar: a raised key ringed by the bar colour. */
+  .fab-3d {
+    background-image: linear-gradient(180deg, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0) 55%);
+    box-shadow:
+      0 0 0 4px var(--fab-ring, #fff),
+      inset 0 1px 0 rgb(255 255 255 / 0.3),
+      inset 0 -3px 0 rgb(0 0 0 / 0.16),
+      0 12px 22px -8px color-mix(in srgb, var(--accent-600) 70%, transparent);
+    transition: translate 150ms ease, box-shadow 150ms ease;
+  }
+  .fab-3d:active {
+    translate: 0 1px;
+    box-shadow: 0 0 0 4px var(--fab-ring, #fff), inset 0 2px 4px rgb(0 0 0 / 0.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float-3d,
+  .float-shadow,
+  .spin-y {
+    animation: none;
+  }
+  .tilt-3d,
+  .tilt-pop,
+  .iso-plate {
+    transition: none;
+  }
+  .btn-3d:hover,
+  .btn-3d-light:hover {
+    translate: none;
+  }
 }
 
 /* Recharts: no focus ring box around the whole SVG on click */

@@ -21,7 +21,7 @@ export function SiteHeader() {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 shadow-[inset_0_-1px_0_rgb(255_255_255/0.7),0_10px_30px_-20px_rgb(15_23_42/0.35)] backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
         <Logo />
         <nav className="hidden items-center gap-1 md:flex" aria-label={t("Site")}>

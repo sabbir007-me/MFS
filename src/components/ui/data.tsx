@@ -20,7 +20,7 @@ export function Tabs<T extends string>({
   ariaLabel: string;
 }) {
   return (
-    <div role="tablist" aria-label={ariaLabel} className={cn("no-scrollbar flex gap-1 overflow-x-auto rounded-xl bg-slate-100 p-1", className)}>
+    <div role="tablist" aria-label={ariaLabel} className={cn("no-scrollbar flex gap-1 overflow-x-auto rounded-xl bg-slate-100 p-1 shadow-well", className)}>
       {tabs.map((tab) => {
         const active = tab.value === value;
         return (
@@ -32,7 +32,7 @@ export function Tabs<T extends string>({
             onClick={() => onChange(tab.value)}
             className={cn(
               "flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition",
-              active ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800",
+              active ? "bg-white text-slate-900 shadow-raised" : "text-slate-500 hover:text-slate-800",
             )}
           >
             {tab.label}
@@ -186,7 +186,7 @@ export function StatTile({
       <div className="flex items-center justify-between gap-2">
         <p className={cn("text-[13px] font-medium", tone === "dark" ? "text-slate-300" : "text-slate-500")}>{label}</p>
         {icon && (
-          <span className={cn("grid h-8 w-8 place-items-center rounded-lg", tone === "dark" ? "bg-white/10 text-accent-500" : "bg-accent-50 text-accent-700")}>
+          <span className={cn("grid h-8 w-8 place-items-center rounded-lg", tone === "dark" ? "icon-3d-dark bg-white/10 text-accent-500" : "icon-3d bg-accent-50 text-accent-700")}>
             {icon}
           </span>
         )}

@@ -227,10 +227,10 @@ export function SidebarNav({ sections, tone = "light", onNavigate }: { sections:
                       "group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition",
                       tone === "dark"
                         ? active
-                          ? "bg-accent-600 text-accent-fg"
+                          ? "btn-3d bg-accent-600 text-accent-fg [--btn-glow:color-mix(in_srgb,var(--accent-600)_55%,transparent)] hover:translate-y-0"
                           : "text-slate-300 hover:bg-white/5 hover:text-white"
                         : active
-                          ? "bg-accent-50 text-accent-700"
+                          ? "bg-accent-50 text-accent-700 shadow-raised ring-1 ring-accent-100"
                           : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
                     )}
                   >
@@ -301,7 +301,7 @@ export function MobileBottomNav({
           {left.map(tab)}
           {center && CenterIcon ? (
             <button type="button" onClick={() => setOpen(true)} className="flex flex-1 flex-col items-center gap-0.5 pb-2 text-[11px] font-semibold text-slate-600" aria-haspopup="dialog">
-              <span className="-mt-5 grid h-14 w-14 place-items-center rounded-2xl bg-accent-600 text-accent-fg shadow-lg ring-4 ring-white">
+              <span className="fab-3d -mt-5 grid h-14 w-14 place-items-center rounded-2xl bg-accent-600 text-accent-fg">
                 <CenterIcon className="h-6 w-6" aria-hidden />
               </span>
               {t(center.label)}
@@ -332,7 +332,7 @@ export function MobileBottomNav({
             return (
               <li key={item.href}>
                 <Link href={item.href} onClick={() => setOpen(false)} className="flex flex-col items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50 px-2 py-4 text-center text-xs font-semibold text-slate-700 active:bg-slate-100">
-                  <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent-100 text-accent-700">
+                  <span className="icon-3d grid h-11 w-11 place-items-center rounded-xl bg-accent-100 text-accent-700">
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
                   {t(item.label)}
